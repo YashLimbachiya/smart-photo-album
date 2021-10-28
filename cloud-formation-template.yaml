@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Smart-Photo-Album-Application
+Parameters:
+  OpenSearchName:
+    Type: String
+    Description:
+      "photos"
+
+Resources:
+  S3BUCKET2:
+    Type: 'AWS::S3::Bucket'
+    Properties: 
+        BucketName: smart-photo-album-bucket
+        AccessControl: Private
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false
+          RestrictPublicBuckets: false
+  
+  S3BUCKET1:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+        BucketName: smart-photo-album-ui
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+
+  OpenSearchInstance:
+    Type: AWS::OpenSearchService::Domain
+    Properties: 
+      AccessPolicies:
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "arn:aws:iam::544883597344:root"
+              AWS: "arn:aws:iam::544883597344:user/dev"
+              AWS: "arn:aws:iam::544883597344:user/YashLimbachiya"
+            Action: "es:*"
+            Resource: !Sub arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/${OpenSearchName}/*
+      DomainName: !Ref OpenSearchName
+      ClusterConfig:
+        InstanceType: t2.small.search
+        InstanceCount: 1
+      EBSOptions:
+        EBSEnabled: true
+        VolumeType: gp2
+        VolumeSize: 10
