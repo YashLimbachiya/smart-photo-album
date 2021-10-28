@@ -34,9 +34,10 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: "arn:aws:iam::544883597344:root"
-              AWS: "arn:aws:iam::544883597344:user/dev"
-              AWS: "arn:aws:iam::544883597344:user/YashLimbachiya"
+              AWS:
+              - "arn:aws:iam::544883597344:root"
+              - "arn:aws:iam::544883597344:user/dev"
+              - "arn:aws:iam::544883597344:user/YashLimbachiya"
             Action: "es:*"
             Resource: !Sub arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/${OpenSearchName}/*
       DomainName: !Ref OpenSearchName
