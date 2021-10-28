@@ -3,32 +3,32 @@ Transform: AWS::Serverless-2016-10-31
 Description: Smart-Photo-Album-Application
 
 Parameters:
-    NamePrefix:
-        Type: String
-        Description: Prefix to add to Lex resource names
-        Default: WebUi
-        MinLength: 3
-        MaxLength: 32
-        AllowedPattern: '^[a-zA-Z\._]+$'
-        ConstraintDescription: >
-            Must conform with the permitted Lex Bot name pattern.
-
-    ShouldDeleteBot:
-        Type: String
-        Default: true
-        AllowedValues:
-          - true
-          - false
-        Description: >
-            If set to True, the Lex bot and associated resources will
-            be deleted when the stack is deleted. Otherwise, the bot
-            will be preserved.
-
-Parameters:
   OpenSearchName:
     Type: String
     Description:
       "photos"
+
+  NamePrefix:
+      Type: String
+      Description: Prefix to add to Lex resource names
+      Default: WebUi
+      MinLength: 3
+      MaxLength: 32
+      AllowedPattern: '^[a-zA-Z\._]+$'
+      ConstraintDescription: >
+          Must conform with the permitted Lex Bot name pattern.
+
+  ShouldDeleteBot:
+      Type: String
+      Default: true
+      AllowedValues:
+        - true
+        - false
+      Description: >
+          If set to True, the Lex bot and associated resources will
+          be deleted when the stack is deleted. Otherwise, the bot
+          will be preserved.
+
 
 Resources:
   S3BUCKET2:
