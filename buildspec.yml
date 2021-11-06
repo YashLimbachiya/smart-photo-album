@@ -5,11 +5,11 @@ phases:
         python: 3.7
   build:
     commands:
-      - pip install --upgrade pip
+      # - pip install --upgrade pip
       # - pip install pipenv --user
-      - pipenv install awscli aws-sam-cli
-      - aws cloudformation package --template-file template.yml --s3-bucket smart-photo-misc-bucket --output-template-file output-template.yaml
+      # - pipenv install awscli aws-sam-cli
       # - pipenv run sam package --template-file template.yml --s3-bucket smart-photo-misc-bucket --output-template-file packaged-template.yml
+      - aws cloudformation package --template-file template.yml --s3-bucket smart-photo-misc-bucket --output-template-file output-template.yaml
 artifacts:  
   type: zip
   files:

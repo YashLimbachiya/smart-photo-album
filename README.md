@@ -1,2 +1,2 @@
 # smart-photo-album
-Smart Photo Album  
+Smart Photo Album   
