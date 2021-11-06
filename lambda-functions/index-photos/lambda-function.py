@@ -39,6 +39,13 @@ def put_to_es(index, type, new_doc):
     r = requests.post(endpoint, auth=awsauth, data=new_doc, headers=headers)
     print(r.content)
 
+def get_s3_metadata(bucket, photo):
+    s3 = boto3.client('s3')
+    metadata = s3.head_object(Bucket=bucket, Key=photo)
+    logger.debug('Getting metadata: ')
+    logger.debug(metadata)
+    return metadata['Metadata']['x-amz-meta-customlabels'] if metadata['Metadata']['x-amz-meta-customlabels'] is not None else ''
+
 def lambda_handler(event, context):
     logger.debug('LF is invoked by S3')
     logger.debug(event)
@@ -59,6 +66,14 @@ def lambda_handler(event, context):
         logger.debug('Getting label for  %s::%s' % (bucket, photo))
         labels = get_photo_labels(bucket, photo)
         logger.debug('Labels for %s::%s are %s' % (bucket, photo, labels))
+
+        # Get custom labels
+        custom_labels = get_s3_metadata(bucket, photo)
+        custom_labels = custom_labels.split(',') if custom_labels is not None else []
+
+        labels = labels + custom_labels
+        logger.debug('Combined Labels: ')
+        logger.debug(labels)
 
         # Index the photo
         doc = {
