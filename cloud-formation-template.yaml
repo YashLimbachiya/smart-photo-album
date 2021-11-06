@@ -45,7 +45,7 @@ Resources:
   S3BUCKET1:
     Type: 'AWS::S3::Bucket'
     Properties:
-        BucketName: smart-photo-album-ui-2
+        BucketName: smart-photo-album-ui
         AccessControl: PublicRead
         WebsiteConfiguration:
           IndexDocument: index.html
@@ -53,7 +53,7 @@ Resources:
   S3BUCKET2:
     Type: 'AWS::S3::Bucket'
     Properties: 
-        BucketName: smart-photo-album-bucket-2
+        BucketName: smart-photo-album-bucket
         AccessControl: Private
         PublicAccessBlockConfiguration:
           BlockPublicAcls: false
@@ -61,137 +61,123 @@ Resources:
           IgnorePublicAcls: false
           RestrictPublicBuckets: false
 
-  # S3BUCKET3:
-  #   Type: 'AWS::S3::Bucket'
-  #   Properties: 
-  #       BucketName: smart-photo-misc-bucket
-  #       AccessControl: Private
+  S3BUCKET3:
+    Type: 'AWS::S3::Bucket'
+    Properties: 
+        BucketName: smart-photo-misc-bucket
+        AccessControl: Private
 
-  # OpenSearchInstance:
-  #   Type: AWS::OpenSearchService::Domain
-  #   Properties: 
-  #     AccessPolicies:
-  #       Statement:
-  #         - Effect: Allow
-  #           Principal:
-  #             AWS:
-  #             - "arn:aws:iam::544883597344:root"
-  #             - "arn:aws:iam::544883597344:user/dev"
-  #             - "arn:aws:iam::544883597344:user/YashLimbachiya"
-  #           Action: "es:*"
-  #           Resource: !Sub arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/${OpenSearchName}/*
-  #     DomainName: !Ref OpenSearchName
-  #     ClusterConfig:
-  #       InstanceType: t2.small.search
-  #       InstanceCount: 1
-  #     EBSOptions:
-  #       EBSEnabled: true
-  #       VolumeType: gp2
-  #       VolumeSize: 10
+  OpenSearchInstance:
+    Type: AWS::OpenSearchService::Domain
+    Properties: 
+      AccessPolicies:
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+              - "arn:aws:iam::544883597344:root"
+              - "arn:aws:iam::544883597344:user/dev"
+              - "arn:aws:iam::544883597344:user/YashLimbachiya"
+            Action: "es:*"
+            Resource: !Sub arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/${OpenSearchName}/*
+      DomainName: !Ref OpenSearchName
+      ClusterConfig:
+        InstanceType: t2.small.search
+        InstanceCount: 1
+      EBSOptions:
+        EBSEnabled: true
+        VolumeType: gp2
+        VolumeSize: 10
 
-  # LexBot:
-  #   Type: Custom::LexBot
-  #   Properties:
-  #       ServiceToken: !GetAtt LexBotLambda.Arn
-  #       BotName: 'PhotoBot'
-  #       BotAlias: 'PhotoChatbot'
-  #       NamePrefix: !Ref NamePrefix
-  #       ShouldDelete: !Ref ShouldDeleteBot
+  LexBot:
+    Type: Custom::LexBot
+    Properties:
+        ServiceToken: !GetAtt LexBotLambda.Arn
+        BotName: 'PhotoBot'
+        BotAlias: 'PhotoChatbot'
+        NamePrefix: !Ref NamePrefix
+        ShouldDelete: !Ref ShouldDeleteBot
 
-  # LexBotLambda:
-  #     Type: AWS::Lambda::Function
-  #     Properties:
-  #         Code:
-  #             S3Bucket: !Ref CustomResourceCodeBucket
-  #             S3Key: !Ref CustomResourceCodeObject
-  #         Handler: lex-manager.handler
-  #         Role: !GetAtt LexBotLambdaRole.Arn
-  #         Runtime: python3.7
-  #         Timeout: 300
-  #         TracingConfig:
-  #             Mode: Active
+  LexBotLambda:
+      Type: AWS::Lambda::Function
+      Properties:
+          Code:
+              S3Bucket: !Ref CustomResourceCodeBucket
+              S3Key: !Ref CustomResourceCodeObject
+          Handler: lex-manager.handler
+          Role: !GetAtt LexBotLambdaRole.Arn
+          Runtime: python3.7
+          Timeout: 300
+          TracingConfig:
+              Mode: Active
 
-  # LexBotLambdaRole:
-  #     Type: AWS::IAM::Role
-  #     Properties:
-  #         Path: /
-  #         AssumeRolePolicyDocument:
-  #             Version: 2012-10-17
-  #             Statement:
-  #                 - Principal:
-  #                       Service:
-  #                           - lambda.amazonaws.com
-  #                   Effect: Allow
-  #                   Action:
-  #                       - sts:AssumeRole
-  #         Policies:
-  #             - PolicyName: LogsForLambda
-  #               PolicyDocument:
-  #                   Version: 2012-10-17
-  #                   Statement:
-  #                       - Effect: Allow
-  #                         Action:
-  #                             - logs:CreateLogGroup
-  #                             - logs:CreateLogStream
-  #                             - logs:PutLogEvents
-  #                         Resource:
-  #                             - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
-  #                             - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
-  #             - PolicyName: LexGetLists
-  #               PolicyDocument:
-  #                   Version: 2012-10-17
-  #                   Statement:
-  #                       - Effect: Allow
-  #                         Action:
-  #                             - lex:GetBots
-  #                             - lex:GetBotAliases
-  #                             - lex:GetIntents
-  #                             - lex:GetSlotTypes
-  #                         Resource:
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:*"
-  #             - PolicyName: LexGet
-  #               PolicyDocument:
-  #                   Version: 2012-10-17
-  #                   Statement:
-  #                       - Effect: Allow
-  #                         Action:
-  #                             - lex:Get*
-  #                         Resource:
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${NamePrefix}*:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${NamePrefix}*:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:${NamePrefix}*:*"
-  #             - PolicyName: LexMutating
-  #               PolicyDocument:
-  #                   Version: 2012-10-17
-  #                   Statement:
-  #                       - Effect: Allow
-  #                         Action:
-  #                             - lex:Put*
-  #                             - lex:Delete*
-  #                         Resource:
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${NamePrefix}*:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${NamePrefix}*:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:*"
-  #                             - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:${NamePrefix}*:*"
+  LexBotLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+          Path: /
+          AssumeRolePolicyDocument:
+              Version: 2012-10-17
+              Statement:
+                  - Principal:
+                        Service:
+                            - lambda.amazonaws.com
+                    Effect: Allow
+                    Action:
+                        - sts:AssumeRole
+          Policies:
+              - PolicyName: LogsForLambda
+                PolicyDocument:
+                    Version: 2012-10-17
+                    Statement:
+                        - Effect: Allow
+                          Action:
+                              - logs:CreateLogGroup
+                              - logs:CreateLogStream
+                              - logs:PutLogEvents
+                          Resource:
+                              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+                              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+              - PolicyName: LexGetLists
+                PolicyDocument:
+                    Version: 2012-10-17
+                    Statement:
+                        - Effect: Allow
+                          Action:
+                              - lex:GetBots
+                              - lex:GetBotAliases
+                              - lex:GetIntents
+                              - lex:GetSlotTypes
+                          Resource:
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:*"
+              - PolicyName: LexGet
+                PolicyDocument:
+                    Version: 2012-10-17
+                    Statement:
+                        - Effect: Allow
+                          Action:
+                              - lex:Get*
+                          Resource:
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${NamePrefix}*:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${NamePrefix}*:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:${NamePrefix}*:*"
+              - PolicyName: LexMutating
+                PolicyDocument:
+                    Version: 2012-10-17
+                    Statement:
+                        - Effect: Allow
+                          Action:
+                              - lex:Put*
+                              - lex:Delete*
+                          Resource:
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:bot:${NamePrefix}*:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:intent:${NamePrefix}*:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:*"
+                              - !Sub "arn:aws:lex:${AWS::Region}:${AWS::AccountId}:slottype:${NamePrefix}*:*"
 
-  # LambdaFunction1:
-  #   Type: 'AWS::Lambda::Function'
-  #   Properties:
-  #     Code:
-  #       S3Bucket: smart-photo-misc-bucket
-  #       S3Key: image-indexing.zip
-  #     Description: Triggered by S3 bucket whenever a new image is uploaded
-  #     FunctionName: image-indexing-lf1
-  #     Handler: lambda-function.lambda_handler
-  #     MemorySize: 256
-  #     Role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/service-role/image-indexing-lf1-role'
-  #     Runtime: python3.7
-  #     Timeout: 60
-
-# Outputs:
-#     BotName:
-#         Description: Lex Bot Name
-#         Value: !Sub "${LexBot.BotName}"
+Outputs:
+    BotName:
+        Description: Lex Bot Name
+        Value: !Sub "${LexBot.BotName}"
