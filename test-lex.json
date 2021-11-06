@@ -5,11 +5,11 @@
     "importFormat": "JSON"
   },
   "resource": {
-    "name": "AnnexBot",
+    "name": "SmartPhotoAlbumBot",
     "version": "1",
     "intents": [
       {
-        "name": "SearchPhoto",
+        "name": "SearchIntent",
         "version": "4",
         "fulfillmentActivity": {
           "type": "ReturnIntent"
