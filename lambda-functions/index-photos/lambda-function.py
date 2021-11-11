@@ -51,6 +51,7 @@ def lambda_handler(event, context):
     logger.debug(event)
 
     # Extract new img from the S3 event
+    # test comment line
     s3obj = try_ex(lambda: event['Records'])
     if not s3obj:
         return {
